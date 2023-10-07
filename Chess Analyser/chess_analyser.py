@@ -77,8 +77,6 @@ def main():
 
         for move in pgn_game.mainline_moves():
             board.push(move)
-            if want_board == "1":
-                print(board)
 
             # Get engine evaluation before the move
             eval_before = prev_eval
@@ -143,6 +141,10 @@ def main():
                 print ("")
             else:
                 print(f"- Move Rating: {move_rating}")
+                
+            print(board)
+            print("")
+            print("")
 
             # Toggle the turn indicator
             is_black_turn = not is_black_turn
