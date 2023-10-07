@@ -141,10 +141,11 @@ def main():
                 print ("")
             else:
                 print(f"- Move Rating: {move_rating}")
-                
-            print(board)
-            print("")
-            print("")
+
+            if want_board == "1":
+                print(board)
+                print("")
+                print("")
 
             # Toggle the turn indicator
             is_black_turn = not is_black_turn
@@ -153,8 +154,8 @@ def main():
 
             # Check if it's the second last move
             if move_number == total_moves:
-                white_accuracy = round(100*(1-(white_blunder+white_inaccuracy+white_mistake)/(total_moves/2)), 1)
-                black_accuracy = round(100*(1-(black_blunder+black_inaccuracy+black_mistake)/(total_moves/2)), 1)
+                white_accuracy = round(100*(1-(white_blunder+white_inaccuracy+white_mistake)/(white_blunder+white_inaccuracy+white_mistake+white_good_move)), 1)
+                black_accuracy = round(100*(1-(black_blunder+black_inaccuracy+black_mistake)/(black_blunder+black_inaccuracy+black_mistake+black_good_move)), 1)
                 print("White moves")
                 print(f"{white_good_move} good moves")
                 print(f"{white_inaccuracy} inaccuracies")
