@@ -1,7 +1,10 @@
 import chess.engine
 import chess.pgn
 import io
-print("NOTES FOR USE: Black advantage is positive, white is negative, and the PGN you paste in should be all on one line. Best way to use it is with a chess app that allows you to replay games but not analyze. To figure out who is threatening mate, the first time it says mate in, check who played that move, and their opponent is threatening mate. E.G. If the 22nd move was mate in, white is threatening mate.")
+
+print(
+    "NOTES FOR USE: Black advantage is positive, white is negative, and the PGN you paste in should be all on one line. Best way to use it is with a chess app that allows you to replay games but not analyze. To figure out who is threatening mate, the first time it says mate in, check who played that move, and their opponent is threatening mate. E.G. If the 22nd move was mate in, white is threatening mate."
+)
 print("")
 want_board = input("Enter 1 if you want the chessboard to show after every move ")
 
@@ -14,7 +17,7 @@ MISTAKE_THRESHOLD = 200
 BLUNDER_THRESHOLD = 400
 
 
-def get_move_rating(eval_before, eval_after, is_black_turn):
+def get_move_rating(eval_before, eval_after, is_black_turn, actual_move, move1):
     # Handle "Mate in" situations
     if isinstance(eval_before, str) and eval_before.startswith("Mate in"):
         return ""  # Ignore 'Mate in' situations
@@ -30,6 +33,8 @@ def get_move_rating(eval_before, eval_after, is_black_turn):
     eval_change = eval_before - eval_after
 
     if is_black_turn:
+        if actual_move == move1:
+            return "Best Move"
         if eval_change >= 400:
             return "Blunder"
         if eval_change >= 200:
@@ -37,6 +42,8 @@ def get_move_rating(eval_before, eval_after, is_black_turn):
         if eval_change >= 100:
             return "Inaccuracy"
     else:
+        if actual_move == move1:
+            return "Best Move"
         if eval_change <= -400:
             return "Blunder"
         if eval_change <= -200:
@@ -70,10 +77,14 @@ def main():
         white_mistake = 0
         white_blunder = 0
         white_good_move = 0
+        white_best_move = 0
         black_inaccuracy = 0
         black_mistake = 0
         black_blunder = 0
         black_good_move = 0
+        black_best_move = 0
+        best_move = None
+        move1 = "Any could"
 
         for move in pgn_game.mainline_moves():
             board.push(move)
@@ -82,9 +93,26 @@ def main():
             eval_before = prev_eval
             eval_after = 0
 
+            # The input string
+            input_string = str(best_move)
+
+            # Find the position of "move=" in the string
+            start_index = input_string.find("move=")
+
+            # Extract the move value, assuming it is in the format move=value,
+            if start_index != -1:
+                end_index = input_string.find(",", start_index)
+                if end_index != -1:
+                    if move_number > 2:
+                        move1 = input_string[
+                            start_index + len("move=") : end_index
+                        ].strip()
+
             # Check if it's Black's turn
+            best_move = engine.play(board, chess.engine.Limit(time=0.1))
             if is_black_turn:
                 evaluation = engine.analyse(board, chess.engine.Limit(time=0.1))
+
                 # Handle mate evaluation
                 if evaluation.get("score"):
                     if evaluation["score"].relative.is_mate():
@@ -106,6 +134,7 @@ def main():
                 else:
                     score = 0
 
+            actual_move = move.uci()
             print(
                 f"Move {move_number}/{total_moves}: {move.uci()} - Evaluation: {score}",
                 end=" ",
@@ -115,7 +144,7 @@ def main():
             if "Mate in" in str(score):
                 move_rating = ""
             else:
-                move_rating = get_move_rating(eval_before, score, is_black_turn)
+                move_rating = get_move_rating(eval_before, score, is_black_turn, actual_move, move1)
 
                 # Count inaccuracies, mistakes, and blunders
                 if is_black_turn:
@@ -127,6 +156,8 @@ def main():
                         black_blunder += 1
                     elif move_rating == "Good Move":
                         black_good_move += 1
+                    elif move_rating == "Best Move":
+                        black_best_move += 1
                 else:
                     if move_rating == "Inaccuracy":
                         white_inaccuracy += 1
@@ -136,11 +167,21 @@ def main():
                         white_blunder += 1
                     elif move_rating == "Good Move":
                         white_good_move += 1
+                    elif move_rating == "Best Move":
+                        white_best_move += 1
 
-            if isinstance(eval_before, str) and eval_before.startswith("Mate in") or isinstance(eval_after, str) and eval_after.startswith("Mate in") or "Mate in" in str(score):
-                print ("")
+            if (
+                isinstance(eval_before, str)
+                and eval_before.startswith("Mate in")
+                or isinstance(eval_after, str)
+                and eval_after.startswith("Mate in")
+                or "Mate in" in str(score)
+            ):
+                print("")
             else:
                 print(f"- Move Rating: {move_rating}")
+
+            print(f"{move1} was the best move")
 
             if want_board == "1":
                 print(board)
@@ -154,9 +195,38 @@ def main():
 
             # Check if it's the second last move
             if move_number == total_moves:
-                white_accuracy = round(100*(1-(white_blunder+white_inaccuracy+white_mistake)/(white_blunder+white_inaccuracy+white_mistake+white_good_move)), 1)
-                black_accuracy = round(100*(1-(black_blunder+black_inaccuracy+black_mistake)/(black_blunder+black_inaccuracy+black_mistake+black_good_move)), 1)
+                white_accuracy = round(
+                    100
+                    * (
+                        1
+                        - (white_blunder + white_inaccuracy + white_mistake)
+                        / (
+                            white_blunder
+                            + white_inaccuracy
+                            + white_mistake
+                            + white_good_move
+                            + white_best_move
+                        )
+                    ),
+                    1,
+                )
+                black_accuracy = round(
+                    100
+                    * (
+                        1
+                        - (black_blunder + black_inaccuracy + black_mistake)
+                        / (
+                            black_blunder
+                            + black_inaccuracy
+                            + black_mistake
+                            + black_good_move
+                            + black_best_move
+                        )
+                    ),
+                    1,
+                )
                 print("White moves")
+                print(f"{white_best_move} best moves")
                 print(f"{white_good_move} good moves")
                 print(f"{white_inaccuracy} inaccuracies")
                 print(f"{white_mistake} mistakes")
@@ -164,6 +234,7 @@ def main():
                 print(f"{white_accuracy}% accuracy")
                 print("")
                 print("Black moves")
+                print(f"{black_best_move} best moves")
                 print(f"{black_good_move} good moves")
                 print(f"{black_inaccuracy} inaccuracies")
                 print(f"{black_mistake} mistakes")
