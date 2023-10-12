@@ -39,7 +39,7 @@ def get_move_rating(eval_before, eval_after, is_black_turn, actual_move, move1):
             return "Blunder"
         if eval_change >= 200:
             return "Mistake"
-        if eval_change >= 100:
+        if eval_change >= 75:
             return "Inaccuracy"
     else:
         if actual_move == move1:
@@ -48,7 +48,7 @@ def get_move_rating(eval_before, eval_after, is_black_turn, actual_move, move1):
             return "Blunder"
         if eval_change <= -200:
             return "Mistake"
-        if eval_change <= -100:
+        if eval_change <= -75:
             return "Inaccuracy"
 
     return "Good Move"
