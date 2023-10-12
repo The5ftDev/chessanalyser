@@ -7,4 +7,4 @@ Now, open up the chess_analyser.py file in that Python editor. Before running it
 
 Next, find a PGN. The PGN needs to be all on one line. An easy way to achieve this is simply to paste the PGN into your search bar, then copy it again. Once you decide whether you want the chessboard to be shown, you enter the PGN and it'll analyse!
 
-Couple more notes: If it is black advantage, the eval will say its positive and vice versa, which is different, but deal with it. If it says Mate in -7, it is Mate in 7 moves for white
+Couple more notes: If it is black advantage, the eval will say its positive and vice versa, which is different, but deal with it. If it says Mate in -7, it is Mate in 7 moves for white. You can change how long the engine takes by modifying time on line 112 and 114
