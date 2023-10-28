@@ -3,7 +3,7 @@ import chess.pgn
 import io
 
 print(
-    "NOTES FOR USE: Black advantage is positive, white is negative, and the PGN you paste in should be all on one line. Best way to use it is with a chess app that allows you to replay games but not analyze. To figure out who is threatening mate, e.g. Mate in -7 would be mate in 7 moves for white"
+    "NOTES FOR USE: Black advantage is positive, white is negative, and the PGN you paste in should be all on one line. Best way to use it is with a chess app that allows you to replay games but not analyze. To figure out who is threatening mate, the first time it says mate in, check who played that move, and their opponent is threatening mate. E.G. If the 22nd move was mate in, white is threatening mate."
 )
 print("")
 want_board = input("Enter 1 if you want the chessboard to show after every move ")
@@ -35,20 +35,20 @@ def get_move_rating(eval_before, eval_after, is_black_turn, actual_move, move1):
     if is_black_turn:
         if actual_move == move1:
             return "Best Move"
-        if eval_change >= 400:
+        if eval_change >= 400 + abs(eval_before + 0.01) / 50:
             return "Blunder"
-        if eval_change >= 200:
+        if eval_change >= 200 + abs(eval_before + 0.01) / 50:
             return "Mistake"
-        if eval_change >= 75:
+        if eval_change >= 75 + abs(eval_before + 0.01) / 50:
             return "Inaccuracy"
     else:
         if actual_move == move1:
             return "Best Move"
-        if eval_change <= -400:
+        if eval_change <= -400 - abs(eval_before + 0.01) / 50:
             return "Blunder"
-        if eval_change <= -200:
+        if eval_change <= -200 - abs(eval_before + 0.01) / 50:
             return "Mistake"
-        if eval_change <= -75:
+        if eval_change <= -75 - abs(eval_before + 0.01) / 50:
             return "Inaccuracy"
 
     return "Good Move"
@@ -153,7 +153,7 @@ def main():
                     elif move_rating == "Mistake":
                         black_mistake += 1
                     elif move_rating == "Blunder":
-                        black_blunder += 1
+                            black_blunder += 1
                     elif move_rating == "Good Move":
                         black_good_move += 1
                     elif move_rating == "Best Move":
