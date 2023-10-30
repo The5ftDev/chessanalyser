@@ -35,20 +35,20 @@ def get_move_rating(eval_before, eval_after, is_black_turn, actual_move, move1):
     if is_black_turn:
         if actual_move == move1:
             return "Best Move"
-        if eval_change >= 400 + abs(eval_before + 0.01) / 50:
+        if eval_change >= 400 + abs(eval_before + 0.01) * 0.5:
             return "Blunder"
-        if eval_change >= 200 + abs(eval_before + 0.01) / 50:
+        if eval_change >= 200 + abs(eval_before + 0.01) * 0.3:
             return "Mistake"
-        if eval_change >= 75 + abs(eval_before + 0.01) / 50:
+        if eval_change >= 75 + abs(eval_before + 0.01) * 0.1:
             return "Inaccuracy"
     else:
         if actual_move == move1:
             return "Best Move"
-        if eval_change <= -400 - abs(eval_before + 0.01) / 50:
+        if eval_change <= -400 - abs(eval_before + 0.01) * 0.5:
             return "Blunder"
-        if eval_change <= -200 - abs(eval_before + 0.01) / 50:
+        if eval_change <= -200 - abs(eval_before + 0.01) * 0.3:
             return "Mistake"
-        if eval_change <= -75 - abs(eval_before + 0.01) / 50:
+        if eval_change <= -75 - abs(eval_before + 0.01) * 0.1:
             return "Inaccuracy"
 
     return "Good Move"
