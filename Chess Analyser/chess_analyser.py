@@ -35,20 +35,20 @@ def get_move_rating(eval_before, eval_after, is_black_turn, actual_move, move1):
     if is_black_turn:
         if actual_move == move1:
             return "Best Move"
-        if eval_change >= 400 + abs(eval_before + 0.01) * 0.5:
+        if eval_change <= -400 + abs(eval_before + 0.01) * 0.3:
             return "Blunder"
-        if eval_change >= 200 + abs(eval_before + 0.01) * 0.3:
+        if eval_change <= -200 + abs(eval_before + 0.01) * 0.2:
             return "Mistake"
-        if eval_change >= 75 + abs(eval_before + 0.01) * 0.1:
+        if eval_change <= -75 + abs(eval_before + 0.01) * 0.1:
             return "Inaccuracy"
     else:
         if actual_move == move1:
             return "Best Move"
-        if eval_change <= -400 - abs(eval_before + 0.01) * 0.5:
+        if eval_change >= 400 - abs(eval_before + 0.01) * 0.3:
             return "Blunder"
-        if eval_change <= -200 - abs(eval_before + 0.01) * 0.3:
+        if eval_change >= 200 - abs(eval_before + 0.01) * 0.2:
             return "Mistake"
-        if eval_change <= -75 - abs(eval_before + 0.01) * 0.1:
+        if eval_change >= 75 - abs(eval_before + 0.01) * 0.1:
             return "Inaccuracy"
 
     return "Good Move"
@@ -119,7 +119,7 @@ def main():
                         mate_in = evaluation["score"].relative.mate()
                         score = f"Mate in {mate_in}"  # Display positive for Black
                     else:
-                        score = -evaluation["score"].relative.score()
+                        score = evaluation["score"].relative.score()
                 else:
                     score = 0
             else:
@@ -130,7 +130,7 @@ def main():
                         mate_in = evaluation["score"].relative.mate()
                         score = f"Mate in {-mate_in}"  # Display negative for White
                     else:
-                        score = evaluation["score"].relative.score()
+                        score = -evaluation["score"].relative.score()
                 else:
                     score = 0
 
