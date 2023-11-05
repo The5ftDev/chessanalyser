@@ -3,7 +3,7 @@ import chess.pgn
 import io
 
 print(
-    "NOTES FOR USE: Black advantage is positive, white is negative, and the PGN you paste in should be all on one line. Best way to use it is with a chess app that allows you to replay games but not analyze. To figure out who is threatening mate, the first time it says mate in, check who played that move, and their opponent is threatening mate. E.G. If the 22nd move was mate in, white is threatening mate."
+    "NOTES FOR USE: The PGN you paste in should be all on one line. Best way to use it is with a chess app that allows you to replay games but not analyze."
 )
 print("")
 want_board = input("Enter 1 if you want the chessboard to show after every move ")
